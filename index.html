@@ -2,100 +2,140 @@
  <html>
  <head>
    <title>Ajax VS Socket.IO</title>
- </head>
-
- <body>
-
-   TOTAL REQUEST: <span class='total_request'></span><br/>
-   AJAX WIN: <span class='total_ajax'></span><br/>
-   SOCKET WIN: <span class='total_socket'></span><br/>
-   DRAW: <span class='total_draw'></span><br/>
-
-   <button class="start">START</button>
-   <button class="stop">STOP</button>
-   <script src="https://cdn.socket.io/socket.io-1.3.4.js"></script>
-   <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-   <script>
-     var request = 0;
-     var last_request = 0;
-     var time_socket = 0;
-     var time_ajax = 0;
-     var total_socket = 0;
-     var total_ajax = 0;
-     var total_draw = 0;
-     var stop = false;
-
-     var socket = io.connect('http://localhost:3000');
-     socket.on('get', function (data) {
-      time_socket = new Date().getMilliseconds();
-      end();
-    });
-
-     $(document).ready(function(){
-
-      $('.stop').click(function(){
-        stop = true;
-      });
-
-      $('.start').click(function(){
-        stop = false;
-        
-        if (request % 2 == 0){
-          $.ajax({
-            url:'http://localhost:3000/get',
-            data: '',
-            success:function(){
-              time_ajax = new Date().getMilliseconds();
-              end();
-            }
-          });  
-          socket.emit('send', {data: ""});  
-        }
-        else{
-          socket.emit('send', {data: ""});  
-          $.ajax({
-            url:'http://localhost:3000',
-            data: '',
-            success:function(){
-              time_ajax = new Date().getMilliseconds();
-              end();
-            }
-          });  
-          
-        }        
-      });
-    });
-
-     function end(){
-      if (last_request == request){
-
-        if (time_ajax < time_socket){
-          total_ajax++;
-        }
-        else if (time_ajax == time_socket){
-          total_draw++;
-        }
-        else if (time_socket < time_ajax){
-          total_socket++;
-        }
-
-        request++;
-
-        $('.total_socket').html(total_socket);
-        $('.total_ajax').html(total_ajax);
-        $('.total_draw').html(total_draw);
-        $('.total_request').html(request);
-
-        if (!stop){
-          $('.start').trigger('click');
-        }
-        
-      }
-      else
-      {
-        last_request = request;
-      }
+   <style>
+     .block
+     {
+      display: inline-block;
+      text-align: center;
+      margin: 20px;
+      font-family: "Arial";
+      color: #333;
+      width: 160px;
     }
-  </script>
+
+    .block span
+    {
+      font-size: 30px;
+      color: #000;
+    }
+
+    .content_blocks
+    {
+      text-align: center;
+    }
+
+    button
+    {
+      padding: 10px 20px 10px 20px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="content_blocks">
+   <div class="block">
+    TOTAL REQUEST<br/><span class='total_request'>0</span><br/> 
+  </div>
+
+  <div class="block">
+   AJAX WIN<br/><span class='total_ajax'>0</span><br/>
+ </div>
+ <div class="block">
+   SOCKET WIN<br/><span class='total_socket'>0</span><br/>
+ </div>
+ <div class="block">
+   DRAW<br/><span class='total_draw'>0</span><br/>
+ </div>
+ <br/><br/>
+ <button class="start">START</button>
+ <button class="stop">STOP</button>
+
+</div>
+
+<script src="https://cdn.socket.io/socket.io-1.3.4.js"></script>
+<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+<script>
+ var request = 0;
+ var last_request = 0;
+ var time_socket = 0;
+ var time_ajax = 0;
+ var total_socket = 0;
+ var total_ajax = 0;
+ var total_draw = 0;
+ var stop = false;
+
+ var socket = io.connect('http://localhost:3000');
+ socket.on('get', function (data) {
+  time_socket = new Date().getMilliseconds();
+  end();
+});
+
+ $(document).ready(function(){
+
+  $('.stop').click(function(){
+    stop = true;
+  });
+
+  $('.start').click(function(){
+    stop = false;
+
+    if (request % 2 == 0){
+      $.ajax({
+        url:'http://localhost:3000/get',
+        data: '',
+        success:function(){
+          time_ajax = new Date().getMilliseconds();
+          end();
+        }
+      });  
+      socket.emit('send', {data: ""});  
+    }
+    else{
+      socket.emit('send', {data: ""});  
+      $.ajax({
+        url:'http://localhost:3000',
+        data: '',
+        success:function(){
+          time_ajax = new Date().getMilliseconds();
+          end();
+        }
+      });  
+
+    }        
+  });
+});
+
+ function end(){
+  if (last_request == request){
+
+    if (time_ajax < time_socket){
+      total_ajax++;
+    }
+    else if (time_ajax == time_socket){
+      total_draw++;
+    }
+    else if (time_socket < time_ajax){
+      total_socket++;
+    }
+
+    request++;
+
+    $('.total_socket').html(total_socket);
+    $('.total_ajax').html(total_ajax);
+    $('.total_draw').html(total_draw);
+    $('.total_request').html(request);
+
+    if (!stop){
+      $('.start').trigger('click');
+    }
+
+  }
+  else
+  {
+    last_request = request;
+  }
+}
+</script>
 </body>
 </html>
