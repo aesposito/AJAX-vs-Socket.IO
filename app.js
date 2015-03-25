@@ -8,9 +8,13 @@ app.get('/', function(req, res){
   res.sendfile('index.html');
 });
 
+app.get('/get', function(req, res){
+  res.json({"data": "data"});
+});
+
 io.on('connection', function (socket) {
 	socket.on('send', function (data) {
-		socket.emit('get2', {data:"data"});
+		socket.emit('get', {data:"data"});
 	});
 });
 
